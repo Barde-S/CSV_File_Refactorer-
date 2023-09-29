@@ -11,11 +11,17 @@ def clean_column_names(df):
     df.columns = df.columns.str.replace(' ', '')  # Replace spaces with underscores
     df.columns = df.columns.str.lower()
 
+    # Define replacements with unique identifiers
+    replacements = {
+        'practice(?!_name)': 'practice_name',
+        'URL|webaddress': 'website',
+        'address1': 'address',
+        'phonenumber|contact': 'phone'
+    }
+
     # Replace column names based on specific criteria
-    df.columns = df.columns.str.replace(r'(?!practice_name)practice', 'practice_name', regex=True)
-    df.columns = df.columns.str.replace('URL|webaddress', 'website', regex=True)
-    df.columns = df.columns.str.replace('address1', 'address')
-    df.columns = df.columns.str.replace('phonenumber|contact', 'phone', regex=True)
+    for pattern, replacement in replacements.items():
+        df.columns = df.columns.str.replace(pattern, replacement, regex=True)
 
     # Columns to drop
     columns_to_drop = [
