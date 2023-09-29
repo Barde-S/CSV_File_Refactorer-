@@ -39,7 +39,9 @@ def clean_column_names(input_file, encoding='utf-8'):
             df.drop(column, axis=1, inplace=True)
 
     df["source"] = "https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link"
-    df = df.rename(columns=[{'practicearea': 'practice_name'}, {'phonenumber':'phone'}],inplace=True)
+    cols = {'practicearea': 'practice_name', 
+             'phonenumber':'phone'}
+    df = df.rename(columns=cols,inplace=True)
 
     return df
 
