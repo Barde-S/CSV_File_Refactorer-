@@ -14,6 +14,12 @@ def clean_column_names(input_file, encoding='utf-8'):
     df.columns = df.columns.str.strip()  # Remove trailing spaces
     df.columns = df.columns.str.replace(' ', '')  # Replace spaces with underscores
     df.columns = df.columns.str.lower()
+    df["source"] = df["source"].fillna("https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link")
+
+
+
+
+
 
     return df
 
