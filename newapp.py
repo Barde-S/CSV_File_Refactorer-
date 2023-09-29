@@ -28,19 +28,6 @@ def clean_column_names(df):
 
     return df
 
-# Define a function to clean column names
-def clean_column_names_internal(column_name):
-    if 'practice' in column_name and column_name != 'practice_name':
-        return 'practice_name'
-    elif column_name in ['URL', 'webaddress']:
-        return 'website'
-    elif column_name == 'address1':
-        return 'address'
-    elif column_name in ['phone number', 'contact']:
-        return 'phone'
-    else:
-        return column_name
-
 # Streamlit UI
 st.title("Column Names Cleaner")
 
@@ -58,7 +45,7 @@ if uploaded_file is not None:
     # Check if a button is clicked to clean the column names
     if st.button("Clean Column Names"):
         # Clean column names using the provided function
-        df.columns = [clean_column_names_internal(col) for col in df.columns]
+        df = clean_column_names(df)
 
         # Check for the existence of both "address" and "address1" columns and drop "address1" if necessary
         if 'address' in df.columns and 'address1' in df.columns:
