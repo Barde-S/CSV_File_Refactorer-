@@ -10,6 +10,17 @@ def clean_column_names(input_file, encoding='utf-8'):
     df = pd.read_csv(input_file, encoding=encoding)
 
 
+    duplicates = set()
+    columns_to_drop = []
+
+    for column in df.columns:
+        if column in duplicates:
+            columns_to_drop.append(column)
+        else:
+            duplicates.add(column)
+
+# Drop the extra columns
+df = df.drop(columns=columns_to_drop)
     # Clean and standardize the column names
     df.columns = df.columns.str.strip()  # Remove trailing spaces
     df.columns = df.columns.str.replace(' ', '')  # Replace spaces with underscores
