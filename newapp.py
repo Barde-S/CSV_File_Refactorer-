@@ -49,6 +49,9 @@ if uploaded_file is not None:
     st.write("Uploaded CSV file:")
     st.write(uploaded_file)
 
+    # Read the CSV file into a DataFrame with the specified encoding
+    df = pd.read_csv(uploaded_file, encoding='ISO-8859-1')
+
     # Check if a button is clicked to clean the column names
     if st.button("Clean Column Names"):
         # Clean column names using the provided function
