@@ -75,3 +75,4 @@ if uploaded_file is not None:
         b64 = base64.b64encode(cleaned_csv).decode()
         href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data.csv">Download cleaned CSV file</a>'
         st.markdown(href, unsafe_allow_html=True)
+ 
