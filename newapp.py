@@ -24,7 +24,7 @@ def clean_column_names(input_file, encoding='utf-8'):
     return df
 
 # Streamlit UI
-st.title("Column Name Cleaner")
+st.title("Column Names Cleaner")
 
 # Upload CSV file
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
