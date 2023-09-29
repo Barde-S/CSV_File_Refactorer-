@@ -9,7 +9,7 @@ def clean_column_names(input_file, encoding='utf-8'):
     # Read the CSV file into a DataFrame with the specified encoding
     df = pd.read_csv(input_file, encoding=encoding)
 
-
+# Check for duplicated columns and drop the  unwanted columns 
     duplicates = set()
     columns_to_drop = []
 
