@@ -25,6 +25,20 @@ df = df.drop(columns=columns_to_drop)
     df.columns = df.columns.str.strip()  # Remove trailing spaces
     df.columns = df.columns.str.replace(' ', '')  # Replace spaces with underscores
     df.columns = df.columns.str.lower()
+    Items_to_drop = [
+    'address2', 'address3', 'companyname', 'contactname', 'title', 'middlename',
+    'executivename', 'jobtitle', 'siccode', 'industry', 'technology', 'employeesize',
+    'revenue($m)', 'sic', 'industrytype', 'verificationresults', 'contactfirst',
+    'annual sales', 'employeecount', 'directphone', 'contactfirst', 'contactlast',
+    'lawfirm'
+]
+
+# Loop through the DataFrame columns and dropcolumns if they are in Items_to_drop
+
+    for column in Items_to_drop:
+        if column in df.columns:
+            df.drop(column, axis=1, inplace=True)
+
     df["source"] = "https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link"
 
 
