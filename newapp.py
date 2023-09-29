@@ -20,10 +20,8 @@ def clean_column_names(df):
         'lawfirm'
     ]
 
-    # Loop through the DataFrame columns and drop columns if they are in Items_to_drop
-    for column in columns_to_drop:
-        if column in df.columns:
-            df.drop(column, axis=1, inplace=True)
+    # Drop unwanted columns
+    df = df.drop(columns=columns_to_drop, errors='ignore')
 
     # Add the "source" column
     df["source"] = "https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link"
@@ -75,4 +73,3 @@ if uploaded_file is not None:
         b64 = base64.b64encode(cleaned_csv).decode()
         href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data.csv">Download cleaned CSV file</a>'
         st.markdown(href, unsafe_allow_html=True)
- 
