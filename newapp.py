@@ -11,6 +11,12 @@ def clean_column_names(df):
     df.columns = df.columns.str.replace(' ', '')  # Replace spaces with underscores
     df.columns = df.columns.str.lower()
 
+    # Replace column names based on specific criteria
+    df.columns = df.columns.str.replace(r'(?!practice_name)practice', 'practice_name', regex=True)
+    df.columns = df.columns.str.replace('URL|webaddress', 'website', regex=True)
+    df.columns = df.columns.str.replace('address1', 'address')
+    df.columns = df.columns.str.replace('phonenumber|contact', 'phone', regex=True)
+
     # Columns to drop
     columns_to_drop = [
         'address2', 'address3', 'companyname', 'contactname', 'title', 'middlename',
@@ -22,6 +28,10 @@ def clean_column_names(df):
 
     # Drop unwanted columns
     df = df.drop(columns=columns_to_drop, errors='ignore')
+
+    # Check for the existence of both "address" and "address1" columns and drop "address1" if necessary
+    if 'address' in df.columns and 'address1' in df.columns:
+        df = df.drop(columns='address1')
 
     # Add the "source" column
     df["source"] = "https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link"
@@ -46,10 +56,6 @@ if uploaded_file is not None:
     if st.button("Clean Column Names"):
         # Clean column names using the provided function
         df = clean_column_names(df)
-
-        # Check for the existence of both "address" and "address1" columns and drop "address1" if necessary
-        if 'address' in df.columns and 'address1' in df.columns:
-            df = df.drop(columns='address1')
 
         # Display cleaned DataFrame
         st.write("Cleaned DataFrame:")
