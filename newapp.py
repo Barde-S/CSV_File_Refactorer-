@@ -5,41 +5,33 @@ import pandas as pd
 import base64
 
 # Define the clean_column_names function
-def clean_column_names(input_file, encoding='utf-8'):
-    # Read the CSV file into a DataFrame with the specified encoding
-    df = pd.read_csv(input_file, encoding=encoding)
-
-
-# Drop the extra columns
-df = df.drop(columns=columns_to_drop)
+def clean_column_names(df):
     # Clean and standardize the column names
     df.columns = df.columns.str.strip()  # Remove trailing spaces
     df.columns = df.columns.str.replace(' ', '')  # Replace spaces with underscores
     df.columns = df.columns.str.lower()
-    Items_to_drop = [
-    'address2', 'address3', 'companyname', 'contactname', 'title', 'middlename',
-    'executivename', 'jobtitle', 'siccode', 'industry', 'technology', 'employeesize',
-    'revenue($m)', 'sic', 'industrytype', 'verificationresults', 'contactfirst',
-    'annual sales', 'employeecount', 'directphone', 'contactfirst', 'contactlast',
-    'lawfirm'
-]
 
-# Loop through the DataFrame columns and dropcolumns if they are in Items_to_drop
+    # Columns to drop
+    columns_to_drop = [
+        'address2', 'address3', 'companyname', 'contactname', 'title', 'middlename',
+        'executivename', 'jobtitle', 'siccode', 'industry', 'technology', 'employeesize',
+        'revenue($m)', 'sic', 'industrytype', 'verificationresults', 'contactfirst',
+        'annualsales', 'employeecount', 'directphone', 'contactfirst', 'contactlast',
+        'lawfirm'
+    ]
 
-    for column in Items_to_drop:
+    # Loop through the DataFrame columns and drop columns if they are in Items_to_drop
+    for column in columns_to_drop:
         if column in df.columns:
             df.drop(column, axis=1, inplace=True)
 
+    # Add the "source" column
     df["source"] = "https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link"
-
-
-
 
     return df
 
-
-
-def clean_column_names(column_name):
+# Define a function to clean column names
+def clean_column_names_internal(column_name):
     if 'practice' in column_name and column_name != 'practice_name':
         return 'practice_name'
     elif column_name in ['URL', 'webaddress']:
@@ -50,16 +42,6 @@ def clean_column_names(column_name):
         return 'phone'
     else:
         return column_name
-
-# Clean column names
-df.columns = [clean_column_names(col) for col in df.columns]
-
-# Check for the existence of both "address" and "address1" columns and drop "address1" if necessary
-if 'address' in df.columns and 'address1' in df.columns:
-    df = df.drop(columns='address1')
-
-
-
 
 # Streamlit UI
 st.title("Column Names Cleaner")
@@ -72,17 +54,24 @@ if uploaded_file is not None:
     st.write("Uploaded CSV file:")
     st.write(uploaded_file)
 
+    # Read the CSV file into a DataFrame with the specified encoding
+    df = pd.read_csv(uploaded_file, encoding='ISO-8859-1')
+
     # Check if a button is clicked to clean the column names
     if st.button("Clean Column Names"):
-        # Clean column names and get the cleaned DataFrame
-        cleaned_df = clean_column_names(uploaded_file, encoding='ISO-8859-1')
+        # Clean column names using the provided function
+        df.columns = [clean_column_names_internal(col) for col in df.columns]
+
+        # Check for the existence of both "address" and "address1" columns and drop "address1" if necessary
+        if 'address' in df.columns and 'address1' in df.columns:
+            df = df.drop(columns='address1')
 
         # Display cleaned DataFrame
         st.write("Cleaned DataFrame:")
-        st.write(cleaned_df)
+        st.write(df)
 
         # Create a download link for the cleaned CSV file
-        cleaned_csv = cleaned_df.to_csv(index=False).encode('utf-8')
+        cleaned_csv = df.to_csv(index=False).encode('utf-8')
         b64 = base64.b64encode(cleaned_csv).decode()
         href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data.csv">Download cleaned CSV file</a>'
         st.markdown(href, unsafe_allow_html=True)
