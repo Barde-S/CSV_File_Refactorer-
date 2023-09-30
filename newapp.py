@@ -3,61 +3,27 @@ import pandas as pd
 import base64
 
 # Define the clean_column_names function
-def clean_column_names(input_file, encoding='utf-8', desired_order=None):
-    # Read the CSV file into a DataFrame with the specified encoding
-    df = pd.read_csv(input_file, encoding=encoding)
-
-    # Check for duplicated columns and drop the unwanted columns
-    duplicates = set()
-    columns_to_drop = []
-
-    for column in df.columns:
-        if column in duplicates:
-            columns_to_drop.append(column)
-        else:
-            duplicates.add(column)
-
-    # Drop the extra columns
-    df = df.drop(columns=columns_to_drop)
+def clean_column_names(df):
+    # Remove duplicated columns
+    df = df.loc[:, ~df.columns.duplicated()]
 
     # Clean and standardize the column names
-    df.columns = df.columns.str.strip()  # Remove trailing spaces
-    df.columns = df.columns.str.replace(' ', '')  # Replace spaces with underscores
-    df.columns = df.columns.str.lower()
+    df.columns = df.columns.str.strip().str.replace(' ', '').str.lower()
 
-    Items_to_drop = [
+    # Items to drop
+    items_to_drop = [
         'address2', 'address3', 'companyname', 'contactname', 'title', 'middlename',
         'executivename', 'jobtitle', 'siccode', 'industry', 'technology', 'employeesize',
         'revenue($m)', 'sic', 'industrytype', 'verificationresults', 'contactfirst',
-        'annualsales', 'employeecount', 'directphone', 'contactfirst', 'contactlast',
-        'lawfirm'
+        'annualsales', 'employeecount', 'directphone', 'lawfirm'
     ]
 
-    # Loop through the DataFrame columns and drop columns if they are in Items_to_drop
-    for column in Items_to_drop:
-        if column in df.columns:
-            df.drop(column, axis=1, inplace=True)
+    # Drop specified columns
+    df.drop(columns=items_to_drop, errors='ignore', inplace=True)
 
-    cols = {'practicearea': 'practice_name', 
-             'phonenumber':'phone',
-             'address1':'address'}
-    df = df.rename(columns=cols)
-# Columns to be rearranged
-    desired_order = [
-    'firstname', 'lastname', 'email', 'phone', 'practice_name', 'specialty',
-    'tagline', 'about', 'website', 'address', 'city', 'state', 'country', 'zipcode',
-    'facebook', 'instagram', 'linkedin', 'google', 'source'
-]
-
-    # Rearrange columns based on the desired order
-    if desired_order:
-        existing_columns = list(df.columns)
-        for col in desired_order:
-            if col not in existing_columns:
-                df[col] = None  # Add missing columns with None values
-        df = df[desired_order]
-
-    df["source"] = "https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link"
+    # Rename columns
+    cols = {'practicearea': 'practice_name', 'phonenumber': 'phone', 'address1': 'address'}
+    df.rename(columns=cols)
 
     return df
 
@@ -67,7 +33,6 @@ st.title("Column Names Cleaner")
 # Upload CSV file
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
-
 if uploaded_file is not None:
     # Display uploaded file
     st.write("Uploaded CSV file:")
@@ -75,8 +40,21 @@ if uploaded_file is not None:
 
     # Check if a button is clicked to clean the column names
     if st.button("Clean Column Names"):
+        # Read the CSV file into a DataFrame
+        df = pd.read_csv(uploaded_file, encoding='ISO-8859-1')
+
         # Clean column names and get the cleaned DataFrame
-        cleaned_df = clean_column_names(uploaded_file, encoding='ISO-8859-1', desired_order=desired_order)
+        cleaned_df = clean_column_names(df)
+
+        # Define the desired order
+        desired_order = [
+            'firstname', 'lastname', 'email', 'phone', 'practice_name', 'specialty',
+            'tagline', 'about', 'website', 'address', 'city', 'state', 'country', 'zipcode',
+            'facebook', 'instagram', 'linkedin', 'google', 'source'
+        ]
+
+        # Rearrange columns based on the desired order
+        cleaned_df = cleaned_df[desired_order]
 
         # Display cleaned DataFrame
         st.write("Cleaned DataFrame:")
