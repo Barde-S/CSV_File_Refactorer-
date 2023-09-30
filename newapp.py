@@ -96,5 +96,5 @@ if uploaded_file is not None:
         # Create a download link for the cleaned CSV file
         cleaned_csv = rearranged_df.to_csv(index=False).encode('utf-8')
         b64 = base64.b64encode(cleaned_csv).decode()
-        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data.csv">Download cleaned CSV file</a>'
+        href = f'<a href="data:file/csv;base64,{b64}" download=f"file_name_{file_number}.csv">Download cleaned CSV file</a>'
         st.markdown(href, unsafe_allow_html=True)
