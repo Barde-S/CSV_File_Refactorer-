@@ -3,7 +3,7 @@ import pandas as pd
 import base64
 
 # Define the clean_column_names function
-def clean_column_names(input_file, encoding='utf-8'):
+def clean_column_names(input_file, encoding='utf-8', desired_order=None):
     # Read the CSV file into a DataFrame with the specified encoding
     df = pd.read_csv(input_file, encoding=encoding)
 
@@ -38,11 +38,26 @@ def clean_column_names(input_file, encoding='utf-8'):
         if column in df.columns:
             df.drop(column, axis=1, inplace=True)
 
-    df["source"] = "https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link"
     cols = {'practicearea': 'practice_name', 
              'phonenumber':'phone',
              'address1':'address'}
     df = df.rename(columns=cols)
+# Columns to be rearranged
+    desired_order = [
+    'firstname', 'lastname', 'email', 'phone', 'practice_name', 'specialty',
+    'tagline', 'about', 'website', 'address', 'city', 'state', 'country', 'zipcode',
+    'facebook', 'instagram', 'linkedin', 'google', 'source'
+]
+
+    # Rearrange columns based on the desired order
+    if desired_order:
+        existing_columns = list(df.columns)
+        for col in desired_order:
+            if col not in existing_columns:
+                df[col] = None  # Add missing columns with None values
+        df = df[desired_order]
+
+    df["source"] = "https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link"
 
     return df
 
@@ -52,6 +67,7 @@ st.title("Column Names Cleaner")
 # Upload CSV file
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
+
 if uploaded_file is not None:
     # Display uploaded file
     st.write("Uploaded CSV file:")
@@ -60,7 +76,7 @@ if uploaded_file is not None:
     # Check if a button is clicked to clean the column names
     if st.button("Clean Column Names"):
         # Clean column names and get the cleaned DataFrame
-        cleaned_df = clean_column_names(uploaded_file, encoding='ISO-8859-1')
+        cleaned_df = clean_column_names(uploaded_file, encoding='ISO-8859-1', desired_order=desired_order)
 
         # Display cleaned DataFrame
         st.write("Cleaned DataFrame:")
