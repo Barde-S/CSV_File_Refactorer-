@@ -47,14 +47,14 @@ def clean_column_names(input_file, encoding='utf-8'):
     return df
 
 # Define the rearrange_and_insert_columns function
-def rearrange_and_insert_columns(df, output_file):
+def rearrange_and_insert_columns(df):
     desired_order = [
         'firstname', 'lastname', 'email', 'phone', 'practice_name', 'specialty',
         'tagline', 'about', 'website', 'address', 'city', 'state', 'country', 'zipcode',
         'facebook', 'instagram', 'linkedin', 'google', 'source'
     ]
 
-    # Initialize a DataFrame with columns in the desired order
+    # Create a new DataFrame with columns in the desired order
     reordered_df = pd.DataFrame(columns=desired_order)
 
     # Iterate through the columns in the desired order
@@ -66,8 +66,7 @@ def rearrange_and_insert_columns(df, output_file):
             # If the column is missing, insert it with empty values
             reordered_df[column] = ''
 
-    # Save the rearranged DataFrame to a new CSV file
-    reordered_df.to_csv(output_file, index=False)
+    return reordered_df
 
 # Streamlit UI
 st.title("Column Names Cleaner")
@@ -85,15 +84,15 @@ if uploaded_file is not None:
         # Clean column names and get the cleaned DataFrame
         cleaned_df = clean_column_names(uploaded_file, encoding='ISO-8859-1')
 
-        # Integrate the rearrange_and_insert_columns function to rearrange columns
-        rearrange_and_insert_columns(cleaned_df, "rearranged_data.csv")
+        # Rearrange and insert missing columns
+        rearranged_df = rearrange_and_insert_columns(cleaned_df)
 
-        # Display cleaned DataFrame
-        st.write("Cleaned DataFrame:")
-        st.write(cleaned_df)
+        # Display cleaned and rearranged DataFrame
+        st.write("Cleaned and Rearranged DataFrame:")
+        st.write(rearranged_df)
 
         # Create a download link for the cleaned CSV file
-        cleaned_csv = cleaned_df.to_csv(index=False).encode('utf-8')
+        cleaned_csv = rearranged_df.to_csv(index=False).encode('utf-8')
         b64 = base64.b64encode(cleaned_csv).decode()
         href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data.csv">Download cleaned CSV file</a>'
         st.markdown(href, unsafe_allow_html=True)
