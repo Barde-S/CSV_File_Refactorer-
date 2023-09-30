@@ -41,36 +41,34 @@ def clean_column_names(input_file, encoding='utf-8'):
     df["source"] = "https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link"
     cols = {'practicearea': 'practice_name', 
              'phonenumber':'phone',
-             'address1':'address'}
+             'address1':'address', 'url':'website'}
     df = df.rename(columns=cols)
 
     # Integrate the rearrange_and_insert_columns function here
-    def rearrange_and_insert_columns(input_file, output_file):
-        desired_order = [
-            'firstname', 'lastname', 'email', 'phone', 'practice_name', 'specialty',
-            'tagline', 'about', 'website', 'address', 'city', 'state', 'country', 'zipcode',
-            'facebook', 'instagram', 'linkedin', 'google', 'source'
-        ]
+    desired_order = [
+        'firstname', 'lastname', 'email', 'phone', 'practice_name', 'specialty',
+        'tagline', 'about', 'website', 'address', 'city', 'state', 'country', 'zipcode',
+        'facebook', 'instagram', 'linkedin', 'google', 'source'
+    ]
 
-        # Read the CSV file into a DataFrame
-        df = pd.read_csv(input_file, encoding='utf-8')  # Specify encoding here
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(input_file, encoding='utf-8')  # Specify encoding here
 
-        # Initialize a DataFrame with columns in the desired order
-        reordered_df = pd.DataFrame(columns=desired_order)
+    # Initialize a DataFrame with columns in the desired order
+    reordered_df = pd.DataFrame(columns=desired_order)
 
-        # Iterate through the columns in the desired order
-        for column in desired_order:
-            if column in df.columns:
-                # If the column exists in the original DataFrame, copy it to the new DataFrame
-                reordered_df[column] = df[column]
-            else:
-                # If the column is missing, insert it with empty values
-                reordered_df[column] = ''
+    # Iterate through the columns in the desired order
+    for column in desired_order:
+        if column in df.columns:
+            # If the column exists in the original DataFrame, copy it to the new DataFrame
+            reordered_df[column] = df[column]
+        else:
+            # If the column is missing, insert it with empty values
+            reordered_df[column] = ''
 
-        # Save the rearranged DataFrame to a new CSV file
-        reordered_df.to_csv(output_file, index=False)
-
-    return df
+    # Save the rearranged DataFrame to a new CSV file
+    output_file = 'rearranged_data.csv'  # Specify the desired output file name
+    reordered_df.to_csv(output_file, index=False)
 
 # Streamlit UI
 st.title("Column Names Cleaner")
