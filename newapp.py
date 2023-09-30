@@ -41,18 +41,18 @@ def clean_column_names(input_file, encoding='utf-8'):
     df["source"] = "https://drive.google.com/drive/folders/1YIIn2o5s3933XyqMirCmiHSxoePYb_nq?usp=share_link"
     cols = {'practicearea': 'practice_name', 
              'phonenumber':'phone',
-             'address1':'address', 'url':'website'}
+             'address1':'address'}
     df = df.rename(columns=cols)
 
-    # Integrate the rearrange_and_insert_columns function here
+    return df
+
+# Define the rearrange_and_insert_columns function
+def rearrange_and_insert_columns(df, output_file):
     desired_order = [
         'firstname', 'lastname', 'email', 'phone', 'practice_name', 'specialty',
         'tagline', 'about', 'website', 'address', 'city', 'state', 'country', 'zipcode',
         'facebook', 'instagram', 'linkedin', 'google', 'source'
     ]
-
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(input_file, encoding='utf-8')  # Specify encoding here
 
     # Initialize a DataFrame with columns in the desired order
     reordered_df = pd.DataFrame(columns=desired_order)
@@ -67,7 +67,6 @@ def clean_column_names(input_file, encoding='utf-8'):
             reordered_df[column] = ''
 
     # Save the rearranged DataFrame to a new CSV file
-    output_file = 'rearranged_data.csv'  # Specify the desired output file name
     reordered_df.to_csv(output_file, index=False)
 
 # Streamlit UI
@@ -85,6 +84,9 @@ if uploaded_file is not None:
     if st.button("Clean Column Names"):
         # Clean column names and get the cleaned DataFrame
         cleaned_df = clean_column_names(uploaded_file, encoding='ISO-8859-1')
+
+        # Integrate the rearrange_and_insert_columns function to rearrange columns
+        rearrange_and_insert_columns(cleaned_df, "rearranged_data.csv")
 
         # Display cleaned DataFrame
         st.write("Cleaned DataFrame:")
