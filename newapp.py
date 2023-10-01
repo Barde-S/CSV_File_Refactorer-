@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import base64
+import csv
 
 # Define the clean_column_names function
 def clean_column_names(input_file, encoding='utf-8'):
@@ -48,27 +49,10 @@ def clean_column_names(input_file, encoding='utf-8'):
 
     return df
 
-# Define the rearrange_and_insert_columns function
-def rearrange_and_insert_columns(df):
-    desired_order = [
-        'firstname', 'lastname', 'email', 'phone', 'practice_name', 'specialty',
-        'tagline', 'about', 'website', 'address', 'city', 'state', 'country', 'zipcode',
-        'facebook', 'instagram', 'linkedin', 'google', 'source'
-    ]
-
-    # Create a new DataFrame with columns in the desired order
-    reordered_df = pd.DataFrame(columns=desired_order)
-
-    # Iterate through the columns in the desired order
-    for column in desired_order:
-        if column in df.columns:
-            # If the column exists in the original DataFrame, copy it to the new DataFrame
-            reordered_df[column] = df[column]
-        else:
-            # If the column is missing, insert it with empty values
-            reordered_df[column] = ''
-
-    return reordered_df
+# Define a function to split the DataFrame into chunks of 1000 rows and save as CSV
+def split_and_save_csv(df, chunk_size=1000):
+    chunks = [df[i:i + chunk_size] for i in range(0, len(df), chunk_size)]
+    return chunks
 
 # Streamlit UI
 st.title("Column Names Cleaner")
@@ -93,8 +77,12 @@ if uploaded_file is not None:
         st.write("Cleaned and Rearranged DataFrame:")
         st.write(rearranged_df)
 
-        # Create a download link for the cleaned CSV file
-        cleaned_csv = cleaned_df.to_csv(index=False).encode('utf-8')
-        b64 = base64.b64encode(cleaned_csv).decode()
-        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data.csv">Download cleaned CSV file</a>'
-        st.markdown(href, unsafe_allow_html=True)
+        # Split the DataFrame into chunks of 1000 rows
+        chunks = split_and_save_csv(rearranged_df)
+
+        # Create download links for each chunk
+        for i, chunk in enumerate(chunks):
+            cleaned_csv = chunk.to_csv(index=False).encode('utf-8')
+            b64 = base64.b64encode(cleaned_csv).decode()
+            href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_chunk_{i+1}.csv">Download Chunk {i+1}</a>'
+            st.markdown(href, unsafe_allow_html=True)
