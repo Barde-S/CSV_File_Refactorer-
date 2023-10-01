@@ -54,6 +54,28 @@ def split_and_save_csv(df, chunk_size=1000):
     chunks = [df[i:i + chunk_size] for i in range(0, len(df), chunk_size)]
     return chunks
 
+# Define the rearrange_and_insert_columns function
+def rearrange_and_insert_columns(df):
+    desired_order = [
+        'firstname', 'lastname', 'email', 'phone', 'practice_name', 'specialty',
+        'tagline', 'about', 'website', 'address', 'city', 'state', 'country', 'zipcode',
+        'facebook', 'instagram', 'linkedin', 'google', 'source'
+    ]
+
+    # Create a new DataFrame with columns in the desired order
+    reordered_df = pd.DataFrame(columns=desired_order)
+
+    # Iterate through the columns in the desired order
+    for column in desired_order:
+        if column in df.columns:
+            # If the column exists in the original DataFrame, copy it to the new DataFrame
+            reordered_df[column] = df[column]
+        else:
+            # If the column is missing, insert it with empty values
+            reordered_df[column] = ''
+
+    return reordered_df
+
 # Streamlit UI
 st.title("Column Names Cleaner")
 
