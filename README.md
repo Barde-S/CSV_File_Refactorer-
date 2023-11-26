@@ -39,6 +39,6 @@ This Streamlit application is designed to clean and organize column names in a C
 - Unwanted columns, such as 'address2' and 'contactname', are dropped from the DataFrame.
 - The cleaned and rearranged DataFrame is displayed in the Streamlit app for user verification.
 
-Feel free to use this tool to enhance the organization and cleanliness of your CSV data!
+Note: This program is for a specific purpose; if you want to use it, you might have to refactor it to meet your preference.
 
 **Note:** Make sure to have Streamlit (`pip install streamlit`) and pandas (`pip install pandas`) installed before running the application.
